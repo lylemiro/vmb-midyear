@@ -72,25 +72,6 @@
         0 0 30px #ffcc00;
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
-
-    @keyframes flipPrize {
-      0% {
-        transform: scaleY(1);
-        opacity: 1;
-      }
-      50% {
-        transform: scaleY(0);
-        opacity: 0.5;
-      }
-      100% {
-        transform: scaleY(1);
-        opacity: 1;
-      }
-    }
-
-    .animate-flip {
-      animation: flipPrize 0.3s ease-in-out;
-    }
   </style>
 </head>
 <body>
@@ -152,12 +133,22 @@
       timerEl.textContent = formatTime(diff);
     }
 
-    function updatePrize(animated = false) {
-      prizeEl.textContent = '₱' + prize.toLocaleString();
-      if (animated) {
-        prizeEl.classList.add('animate-flip');
-        setTimeout(() => prizeEl.classList.remove('animate-flip'), 300);
+    function animatePrize(toValue) {
+      const fromValue = parseInt(prizeEl.textContent.replace(/[₱,]/g, '')) || 0;
+      const duration = 500;
+      const startTime = performance.now();
+
+      function step(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentValue = Math.floor(fromValue + (toValue - fromValue) * progress);
+        prizeEl.textContent = '₱' + currentValue.toLocaleString();
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
       }
+
+      requestAnimationFrame(step);
     }
 
     function resetAll() {
@@ -165,7 +156,7 @@
       customOffset = 0;
       localStorage.removeItem('prize');
       localStorage.removeItem('customOffset');
-      updatePrize();
+      animatePrize(prize);
     }
 
     document.addEventListener('keydown', (e) => {
@@ -180,24 +171,24 @@
       if (key === 'p') {
         prize += 500;
         localStorage.setItem('prize', prize);
-        updatePrize(true);
+        animatePrize(prize);
       }
       if (key === 'm') {
         prize = Math.max(0, prize - 500);
         localStorage.setItem('prize', prize);
-        updatePrize(true);
+        animatePrize(prize);
       }
       if (key === 'c') {
         resetAll();
       }
       if (key === 't') {
-        customOffset += 60000; // 1 minute
+        customOffset += 60000; // 1 min
         localStorage.setItem('customOffset', customOffset);
       }
     });
 
     updateTimer();
-    updatePrize();
+    animatePrize(prize);
     setInterval(updateTimer, 1000);
   </script>
 
