@@ -15,14 +15,14 @@
       background: black;
     }
 
-.background-layer {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: fill; /* forces stretch to cover corner to corner */
-  z-index: 0;
-}
+    .background-layer {
+      position: fixed;
+      top: 0; left: 0;
+
+      width: 100%;
+      object-fit: fill;
+      z-index: 0;
+    }
 
     #bg-bottom   { z-index: 0; }
     #bg-middle   { z-index: 1; }
@@ -40,7 +40,6 @@
       align-items: center;
       text-align: center;
       margin-top: 2% !important;
-
     }
 
     #timer {
@@ -74,13 +73,8 @@
 </head>
 <body>
 
-  <!-- Background Layers -->
-  <img src="bg-bottom.png" class="background-layer" id="bg-bottom">
-  <img src="bg-middle.png" class="background-layer" id="bg-middle">
-  <video autoplay loop muted playsinline class="background-layer" id="bg-video">
-    <source src="effects.mp4" type="video/mp4">
-  </video>
-  <img src="overlay.png" class="background-layer" id="bg-top">
+  <!-- Dynamic Background Layers -->
+  <div id="backgrounds"></div>
 
   <!-- Main Content -->
   <div class="content">
@@ -90,12 +84,39 @@
   </div>
 
   <script>
+    // Detect if mobile
+    const isMobile = window.innerWidth <= 768;
+
+    const assets = isMobile ? {
+      bottom: 'mobile/bg-bottom.png',
+      middle: 'mobile/bg-middle.png',
+      video: 'mobile/effects.mp4',
+      top: 'mobile/overlay.png'
+    } : {
+      bottom: 'bg-bottom.png',
+      middle: 'bg-middle.png',
+      video: 'effects.mp4',
+      top: 'overlay.png'
+    };
+
+    // Load background layers dynamically
+    const backgrounds = document.getElementById('backgrounds');
+    backgrounds.innerHTML = `
+      <img src="${assets.bottom}" class="background-layer" id="bg-bottom">
+      <img src="${assets.middle}" class="background-layer" id="bg-middle">
+      <video autoplay loop muted playsinline class="background-layer" id="bg-video">
+        <source src="${assets.video}" type="video/mp4">
+      </video>
+      <img src="${assets.top}" class="background-layer" id="bg-top">
+    `;
+
+    // Countdown logic
     const timerEl = document.getElementById('timer');
     const prizeEl = document.getElementById('prize');
-    const EVENT_DATE = new Date("2025-11-22T16:00:00+08:00").getTime(); // 4PM PH Time
+    const EVENT_DATE = new Date("2025-11-22T16:00:00+08:00").getTime(); // 4PM PH time
 
-    let prize = 0;
-    let customOffset = 0;
+    let prize = parseInt(localStorage.getItem('prize')) || 0;
+    let customOffset = parseInt(localStorage.getItem('customOffset')) || 0;
 
     function formatTime(ms) {
       const totalSeconds = Math.max(0, Math.floor(ms / 1000));
@@ -119,6 +140,8 @@
     function resetAll() {
       prize = 0;
       customOffset = 0;
+      localStorage.removeItem('prize');
+      localStorage.removeItem('customOffset');
       updatePrize();
     }
 
@@ -133,13 +156,15 @@
       }
       if (key === 'p') {
         prize += 500;
+        localStorage.setItem('prize', prize);
         updatePrize();
       }
       if (key === 'c') {
         resetAll();
       }
       if (key === 't') {
-        customOffset += 60000; // Add 1 minute
+        customOffset += 60000; // 1 minute
+        localStorage.setItem('customOffset', customOffset);
       }
     });
 
