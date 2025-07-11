@@ -18,9 +18,9 @@
     .background-layer {
       position: fixed;
       top: 0; left: 0;
-      height: 100vh;
       width: 100vw;
-      object-fit: cover;
+      height: 100vh;
+      object-fit: cover; /* Maintain proportions */
       z-index: 0;
     }
 
@@ -39,7 +39,7 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      margin-top: 2% !important;
+      margin-top: 2%;
     }
 
     #timer {
@@ -84,13 +84,12 @@
   </div>
 
   <script>
-    // Detect if mobile
     const isMobile = window.innerWidth <= 768;
 
     const assets = isMobile ? {
-      bottom: 'mobile/bg-bottom.png',
-      middle: 'mobile/bg-middle.png',
-      video: 'mobile/effects.mp4',
+      bottom: 'mobile/bottom.png',
+      middle: 'mobile/middle.png',
+      video: 'mobile/effect.mp4',
       top: 'mobile/overlay.png'
     } : {
       bottom: 'bg-bottom.png',
@@ -99,7 +98,6 @@
       top: 'overlay.png'
     };
 
-    // Load background layers dynamically
     const backgrounds = document.getElementById('backgrounds');
     backgrounds.innerHTML = `
       <img src="${assets.bottom}" class="background-layer" id="bg-bottom">
@@ -110,10 +108,9 @@
       <img src="${assets.top}" class="background-layer" id="bg-top">
     `;
 
-    // Countdown logic
     const timerEl = document.getElementById('timer');
     const prizeEl = document.getElementById('prize');
-    const EVENT_DATE = new Date("2025-11-22T16:00:00+08:00").getTime(); // 4PM PH time
+    const EVENT_DATE = new Date("2025-11-22T16:00:00+08:00").getTime();
 
     let prize = parseInt(localStorage.getItem('prize')) || 0;
     let customOffset = parseInt(localStorage.getItem('customOffset')) || 0;
