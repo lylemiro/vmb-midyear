@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Countdown Timer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Arial Black', sans-serif;
+      background: black;
+    }
+
+.background-layer {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: fill; /* forces stretch to cover corner to corner */
+  z-index: 0;
+}
+
+    #bg-bottom   { z-index: 0; }
+    #bg-middle   { z-index: 1; }
+    #bg-video    { z-index: 2; opacity: 0.3; }
+    #bg-top      { z-index: 3; pointer-events: none; }
+
+    .content {
+      position: relative;
+      z-index: 4;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      margin-top: 2% !important;
+
+    }
+
+    #timer {
+      font-size: 4vw;
+      color: white;
+      text-shadow:
+        0 0 10px #ffd700,
+        0 0 20px #ffd700,
+        0 0 30px #ffcc00;
+      margin: 0;
+    }
+
+    #label {
+      font-size: 1.65vw;
+      color: white;
+      text-shadow: 0 0 8px black;
+      margin-top: 1vh;
+      letter-spacing: 0.1vw;
+    }
+
+    #prize {
+      font-size: 7vw;
+      margin-top: 3vh;
+      color: white;
+      text-shadow:
+        0 0 10px #ffd700,
+        0 0 20px #ffd700,
+        0 0 30px #ffcc00;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Layers -->
+  <img src="bg-bottom.png" class="background-layer" id="bg-bottom">
+  <img src="bg-middle.png" class="background-layer" id="bg-middle">
+  <video autoplay loop muted playsinline class="background-layer" id="bg-video">
+    <source src="effects.mp4" type="video/mp4">
+  </video>
+  <img src="overlay.png" class="background-layer" id="bg-top">
+
+  <!-- Main Content -->
+  <div class="content">
+    <div id="prize">₱0</div>
+    <div id="timer">00 • 00 • 00 • 00</div>
+    <div id="label">DAYS • HOURS • MINUTES • SECONDS</div>
+  </div>
+
+  <script>
+    const timerEl = document.getElementById('timer');
+    const prizeEl = document.getElementById('prize');
+    const EVENT_DATE = new Date("2025-11-22T16:00:00+08:00").getTime(); // 4PM PH Time
+
+    let prize = 0;
+    let customOffset = 0;
+
+    function formatTime(ms) {
+      const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+      const days = Math.floor(totalSeconds / (3600 * 24));
+      const hrs = Math.floor((totalSeconds % (3600 * 24)) / 3600).toString().padStart(2, '0');
+      const mins = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+      const secs = (totalSeconds % 60).toString().padStart(2, '0');
+      return `${days} • ${hrs} • ${mins} • ${secs}`;
+    }
+
+    function updateTimer() {
+      const now = Date.now();
+      const diff = (EVENT_DATE + customOffset) - now;
+      timerEl.textContent = formatTime(diff);
+    }
+
+    function updatePrize() {
+      prizeEl.textContent = '₱' + prize.toLocaleString();
+    }
+
+    function resetAll() {
+      prize = 0;
+      customOffset = 0;
+      updatePrize();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const key = e.key.toLowerCase();
+      if (key === 'f') {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+      }
+      if (key === 'p') {
+        prize += 500;
+        updatePrize();
+      }
+      if (key === 'c') {
+        resetAll();
+      }
+      if (key === 't') {
+        customOffset += 60000; // Add 1 minute
+      }
+    });
+
+    updateTimer();
+    updatePrize();
+    setInterval(updateTimer, 1000);
+  </script>
+
+</body>
+</html>
