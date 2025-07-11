@@ -41,7 +41,7 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      margin-top: 2% !important;
+      margin-top: 2%;
     }
 
     #timer {
@@ -70,6 +70,26 @@
         0 0 10px #ffd700,
         0 0 20px #ffd700,
         0 0 30px #ffcc00;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    @keyframes flipPrize {
+      0% {
+        transform: scaleY(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scaleY(0);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scaleY(1);
+        opacity: 1;
+      }
+    }
+
+    .animate-flip {
+      animation: flipPrize 0.3s ease-in-out;
     }
   </style>
 </head>
@@ -87,19 +107,19 @@
 
   <script>
     const isMobile = window.innerWidth <= 768;
-
     const assets = isMobile ? {
       bottom: 'mobile/bottom.png',
       middle: 'mobile/middle.png',
       video: 'mobile/effect.mp4',
       top: 'mobile/overlay.png'
     } : {
-      bottom: 'bg-bottom.png',
-      middle: 'bg-middle.png',
-      video: 'effects.mp4',
+      bottom: 'bottom.png',
+      middle: 'middle.png',
+      video: 'effect.mp4',
       top: 'overlay.png'
     };
 
+    // Load background layers
     const backgrounds = document.getElementById('backgrounds');
     backgrounds.innerHTML = `
       <img src="${assets.bottom}" class="background-layer" id="bg-bottom">
@@ -132,8 +152,12 @@
       timerEl.textContent = formatTime(diff);
     }
 
-    function updatePrize() {
+    function updatePrize(animated = false) {
       prizeEl.textContent = '₱' + prize.toLocaleString();
+      if (animated) {
+        prizeEl.classList.add('animate-flip');
+        setTimeout(() => prizeEl.classList.remove('animate-flip'), 300);
+      }
     }
 
     function resetAll() {
@@ -156,18 +180,18 @@
       if (key === 'p') {
         prize += 500;
         localStorage.setItem('prize', prize);
-        updatePrize();
+        updatePrize(true);
       }
       if (key === 'm') {
-        prize = Math.max(0, prize - 500); // Don't go below 0
+        prize = Math.max(0, prize - 500);
         localStorage.setItem('prize', prize);
-        updatePrize();
+        updatePrize(true);
       }
       if (key === 'c') {
         resetAll();
       }
       if (key === 't') {
-        customOffset += 60000; // Add 1 minute
+        customOffset += 60000; // 1 minute
         localStorage.setItem('customOffset', customOffset);
       }
     });
