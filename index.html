@@ -17,8 +17,7 @@
 
     .background-layer {
       position: fixed;
-      top: 0; 
-      left: 0;
+      top: 0; left: 0;
       width: 100vw;
       height: 100vh;
       object-fit: cover;
@@ -26,10 +25,10 @@
       z-index: 0;
     }
 
-    #bg-bottom   { z-index: 0; }
-    #bg-middle   { z-index: 1; }
-    #bg-video    { z-index: 2; opacity: 0.3; }
-    #bg-top      { z-index: 3; pointer-events: none; }
+    #bg-bottom { z-index: 0; }
+    #bg-middle { z-index: 1; }
+    #bg-video { z-index: 2; opacity: 0.3; }
+    #bg-top { z-index: 3; pointer-events: none; }
 
     .content {
       position: relative;
@@ -47,10 +46,9 @@
     #timer {
       font-size: 4vw;
       color: white;
-      text-shadow:
-        0 0 10px #ffd700,
-        0 0 20px #ffd700,
-        0 0 30px #ffcc00;
+      text-shadow: 0 0 10px #ffd700,
+                   0 0 20px #ffd700,
+                   0 0 30px #ffcc00;
       margin: 0;
     }
 
@@ -66,10 +64,9 @@
       font-size: 7vw;
       margin-top: 3vh;
       color: white;
-      text-shadow:
-        0 0 10px #ffd700,
-        0 0 20px #ffd700,
-        0 0 30px #ffcc00;
+      text-shadow: 0 0 10px #ffd700,
+                   0 0 20px #ffd700,
+                   0 0 30px #ffcc00;
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
   </style>
@@ -100,7 +97,6 @@
       top: 'overlay.png'
     };
 
-    // Load background layers
     const backgrounds = document.getElementById('backgrounds');
     backgrounds.innerHTML = `
       <img src="${assets.bottom}" class="background-layer" id="bg-bottom">
@@ -143,9 +139,7 @@
         const progress = Math.min(elapsed / duration, 1);
         const currentValue = Math.floor(fromValue + (toValue - fromValue) * progress);
         prizeEl.textContent = '₱' + currentValue.toLocaleString();
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        }
+        if (progress < 1) requestAnimationFrame(step);
       }
 
       requestAnimationFrame(step);
@@ -182,7 +176,11 @@
         resetAll();
       }
       if (key === 't') {
-        customOffset += 60000; // 1 min
+        customOffset += 60000; // +1 min
+        localStorage.setItem('customOffset', customOffset);
+      }
+      if (key === 'y') {
+        customOffset -= 60000; // -1 min
         localStorage.setItem('customOffset', customOffset);
       }
     });
