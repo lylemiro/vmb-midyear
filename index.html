@@ -40,7 +40,7 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 2vh 4vw;
+      margin-top: 2%;
     }
 
     #timer {
@@ -69,28 +69,14 @@
                    0 0 30px #ffcc00;
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
-
-    /* 📱 MOBILE STYLE OVERRIDES */
-    @media (max-width: 768px) {
-      #timer {
-        font-size: 9vw;
-      }
-
-      #label {
-        font-size: 3.5vw;
-        letter-spacing: 0.3vw;
-      }
-
-      #prize {
-        font-size: 13vw;
-      }
-    }
   </style>
 </head>
 <body>
 
+  <!-- Background Layers -->
   <div id="backgrounds"></div>
 
+  <!-- Main Content -->
   <div class="content">
     <div id="prize">₱0</div>
     <div id="timer">00 • 00 • 00 • 00</div>
@@ -190,11 +176,11 @@
         resetAll();
       }
       if (key === 't') {
-        customOffset += 60000;
+        customOffset += 60000; // +1 min
         localStorage.setItem('customOffset', customOffset);
       }
       if (key === 'y') {
-        customOffset -= 60000;
+        customOffset -= 60000; // -1 min
         localStorage.setItem('customOffset', customOffset);
       }
     });
@@ -203,5 +189,6 @@
     animatePrize(prize);
     setInterval(updateTimer, 1000);
   </script>
+
 </body>
 </html>
